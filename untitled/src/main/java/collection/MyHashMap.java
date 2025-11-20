@@ -4,7 +4,6 @@ package collection;
 public class MyHashMap<K, V> {
 
     private static final int DEFAULT_CAPACITY = 16;
-    private static final float DEFAULT_LOAD_FACTOR = 0.75f;
 
     private Entry<K, V>[] table;
     private int size;
@@ -12,12 +11,11 @@ public class MyHashMap<K, V> {
     private float loadFactor;
 
     public MyHashMap() {
-        this(DEFAULT_CAPACITY, DEFAULT_LOAD_FACTOR);
+        this(DEFAULT_CAPACITY);
     }
 
-    public MyHashMap(int capacity, float loadFactor) {
+    public MyHashMap(int capacity) {
         this.capacity = capacity;
-        this.loadFactor = loadFactor;
         table = new Entry[capacity];
     }
 
@@ -36,7 +34,7 @@ public class MyHashMap<K, V> {
 
 
     private int hash(K key) {
-        return Math.abs(key.hashCode()) % capacity;
+        return (key == null) ? 0 : Math.abs(key.hashCode()) % capacity;
     }
 
 
@@ -87,24 +85,26 @@ public class MyHashMap<K, V> {
     }
 
 
-    public void remove(K key) {
+    public V remove(K key) {
         int index = hash(key);
         Entry<K, V> current = table[index];
         Entry<K, V> previous = null;
 
         while (current != null) {
             if (current.key.equals(key)) {
+                V value = current.value;
                 if (previous == null) {
                     table[index] = current.next;
                 } else {
                     previous.next = current.next;
                 }
                 size--;
-                return;
+                return value;
             }
             previous = current;
             current = current.next;
         }
+        return null;
     }
 
 
@@ -143,8 +143,11 @@ public class MyHashMap<K, V> {
         System.out.println("Значение для ключа 'Два': " + map.get("Два"));
         System.out.println("Размер: " + map.size());
 
+        Integer removeNullKey = map.remove(null);
+        System.out.println("удаление null: " + removeNullKey);
+
         map.remove("Два");
-        System.out.println("Значение для ключа 'Два' после удаления: " + map.get("Два")); 
+        System.out.println("Значение для ключа 'Два' после удаления: " + map.get("Два"));
         System.out.println("Размер после удаления: " + map.size());
     }
 }
